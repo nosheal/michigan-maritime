@@ -1,0 +1,46 @@
+io_code,industry_desc,naics_3digit_sector,correlation,buyer,mi_establishments,mi_employment
+314900,Other textile product mills,Textile product mills,0.1104147529716546,Ship Building & Repair (336611),0,0
+321100,Sawmills and wood preservation,Wood product manufacturing,0.06745290463277707,Ship Building & Repair (336611),0,0
+322130,Paperboard mills,Paper manufacturing,0.06338077651143201,Ship Building & Repair (336611),4,451
+3259A0,All other chemical product and preparation manufacturing,Chemical manufacturing,0.10782538999401174,Ship Building & Repair (336611),0,0
+326110,Plastics packaging materials and unlaminated film and sheet manufacturing,Plastics and rubber products manufacturing,0.026497814471212005,Ship Building & Repair (336611),3,164
+326130,Laminated plastics plate  sheet  except packaging   and shape manufacturing,Plastics and rubber products manufacturing,0.16589112481914461,Ship Building & Repair (336611),0,0
+331110,Iron and steel mills and ferroalloy manufacturing,Primary metal manufacturing,0.10864379733241969,Ship Building & Repair (336611),8,147
+331200,Steel product manufacturing from purchased steel,Primary metal manufacturing,0.009723545266130925,Ship Building & Repair (336611),0,0
+33131B,Aluminum product manufacturing from purchased aluminum,Primary metal manufacturing,0.03601198014034604,Ship Building & Repair (336611),6,1199
+331490,Nonferrous metal  except copper and aluminum  rolling  drawing  extruding and alloying,Primary metal manufacturing,0.2099203500298578,Ship Building & Repair (336611),0,0
+331510,Ferrous metal foundries,Primary metal manufacturing,0.00013281915517945927,Ship Building & Repair (336611),6,2843
+331520,Nonferrous metal foundries,Primary metal manufacturing,0.04519527944794036,Ship Building & Repair (336611),28,2754
+33211A,All other forging  stamping  and sintering,Fabricated metal product manufacturing,0.17471159085979282,Ship Building & Repair (336611),85,5502
+332800,Coating  engraving  heat treating and allied activities,Fabricated metal product manufacturing,0.038292802142314834,Ship Building & Repair (336611),0,0
+33291A,Valve and fittings other than plumbing,Fabricated metal product manufacturing,0.16068238767501383,Ship Building & Repair (336611),18,2954
+333611,Turbine and turbine generator set units manufacturing,Machinery manufacturing,0.0032166099255837516,Ship Building & Repair (336611),3,195
+333618,Other engine equipment manufacturing,Machinery manufacturing,0.07685312729836973,Ship Building & Repair (336611),6,4472
+333920,Material handling equipment manufacturing,Machinery manufacturing,0.034143916978088176,Ship Building & Repair (336611),84,5365
+33399B,Fluid power process machinery,Machinery manufacturing,0.11629645227513452,Ship Building & Repair (336611),174,9780
+334413,Semiconductor and related device manufacturing,Computer and electronic product manufacturing,0.1571250605773003,Ship Building & Repair (336611),7,186
+334418,Printed circuit assembly  electronic assembly  manufacturing,Computer and electronic product manufacturing,0.07993230647514699,Ship Building & Repair (336611),18,1628
+33441A,Other electronic component manufacturing,Computer and electronic product manufacturing,0.19172344468976243,Ship Building & Repair (336611),48,3736
+334511,Search  detection  and navigation instruments manufacturing,Computer and electronic product manufacturing,0.2127430423417081,Ship Building & Repair (336611),7,1906
+335312,Motor and generator manufacturing,"Electrical equipment, appliance, and component manufacturing",0.14445567633844025,Ship Building & Repair (336611),27,1100
+335314,Relay and industrial control manufacturing,"Electrical equipment, appliance, and component manufacturing",0.030119165666829675,Ship Building & Repair (336611),24,1026
+336310,Motor vehicle gasoline engine and engine parts manufacturing,Transportation equipment manufacturing,0.07625062054677928,Ship Building & Repair (336611),45,10175
+336320,Motor vehicle electrical and electronic equipment manufacturing,Transportation equipment manufacturing,0.2259323039757424,Ship Building & Repair (336611),40,5658
+336350,Motor vehicle transmission and power train parts manufacturing,Transportation equipment manufacturing,0.009853269392230683,Ship Building & Repair (336611),36,12399
+314900,Other textile product mills,Textile product mills,0.3055662884726909,Boat Building (336612),0,0
+322210,Paperboard container manufacturing,Paper manufacturing,0.07922853614097466,Boat Building (336612),43,5759
+323110,Printing,Printing and related support activities,0.003007015171592393,Boat Building (336612),559,11376
+326110,Plastics packaging materials and unlaminated film and sheet manufacturing,Plastics and rubber products manufacturing,0.09951984458311261,Boat Building (336612),3,164
+326130,Laminated plastics plate  sheet  except packaging   and shape manufacturing,Plastics and rubber products manufacturing,0.11717438715030293,Boat Building (336612),0,0
+326290,Other rubber product manufacturing,Plastics and rubber products manufacturing,0.10072011150791996,Boat Building (336612),11,829
+331200,Steel product manufacturing from purchased steel,Primary metal manufacturing,0.030193727681879782,Boat Building (336612),0,0
+332991,Ball and roller bearing manufacturing,Fabricated metal product manufacturing,0.002723069809474037,Boat Building (336612),3,65
+333618,Other engine equipment manufacturing,Machinery manufacturing,0.11589064747967445,Boat Building (336612),6,4472
+333914,Measuring  dispensing  and other pumping equipment manufacturing,Machinery manufacturing,0.14520574712384565,Boat Building (336612),4,31
+334413,Semiconductor and related device manufacturing,Computer and electronic product manufacturing,0.047800449439259485,Boat Building (336612),7,186
+33441A,Other electronic component manufacturing,Computer and electronic product manufacturing,0.007472528571200376,Boat Building (336612),48,3736
+334511,Search  detection  and navigation instruments manufacturing,Computer and electronic product manufacturing,0.04504815978158559,Boat Building (336612),7,1906
+335120,Lighting fixture manufacturing,"Electrical equipment, appliance, and component manufacturing",0.014439389390510213,Boat Building (336612),6,226
+336310,Motor vehicle gasoline engine and engine parts manufacturing,Transportation equipment manufacturing,0.07306969554952225,Boat Building (336612),45,10175
+336390,Other motor vehicle parts manufacturing,Transportation equipment manufacturing,0.005512661484585814,Boat Building (336612),136,27291
+336612,Boat building,Transportation equipment manufacturing,0.13152213685897127,Boat Building (336612),4,384

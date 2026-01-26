@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michigan Maritime Supplier Discovery Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #2c5282;
+            --accent: #4299e1;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --light: #f7fafc;
+            --dark: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .metric-card.highlight {
+            background: linear-gradient(135deg, var(--success) 0%, #38a169 100%);
+            color: white;
+        }
+
+        .metric-card.highlight .metric-value,
+        .metric-card.highlight .metric-label {
+            color: white;
+        }
+
+        .metric-card.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #dd6b20 100%);
+            color: white;
+        }
+
+        .metric-card.warning .metric-value,
+        .metric-card.warning .metric-label {
+            color: white;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--primary);
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.high {
+            background: var(--success);
+        }
+
+        .progress-fill.medium {
+            background: var(--warning);
+        }
+
+        .progress-fill.low {
+            background: var(--danger);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .badge-warning {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .badge-danger {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .insight-box h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-bar select, .filter-bar input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .certified-companies {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .company-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid var(--success);
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .company-location {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-products {
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Michigan Maritime Supplier Discovery</h1>
+        <p>Identifying untapped manufacturing capacity for the shipbuilding & boat building industries</p>
+    </div>
+
+    <div class="container">
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">1,443</div>
+                <div class="metric-label">Total Potential Suppliers</div>
+            </div>
+            <div class="metric-card highlight">
+                <div class="metric-value">19</div>
+                <div class="metric-label">Certified Maritime Suppliers</div>
+            </div>
+            <div class="metric-card warning">
+                <div class="metric-value">1,424</div>
+                <div class="metric-label">Untapped Potential</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">1.3%</div>
+                <div class="metric-label">Current Certification Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">36</div>
+                <div class="metric-label">Supplier Industries</div>
+            </div>
+        </div>
+
+        <!-- Insight Box -->
+        <div class="insight-box">
+            <h4>Key Finding</h4>
+            <p>Michigan has <strong>1,424 manufacturing establishments</strong> that produce inputs for the maritime industry but lack class society certification. These represent significant opportunities for supplier diversification and regional supply chain development.</p>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Supply Chain Analysis</h2>
+            </div>
+            <div class="charts-grid">
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Certification Gap by Industry</h3>
+                    <div class="chart-container">
+                        <canvas id="gapChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--secondary);">Supplier Distribution by Category</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gap Analysis Table -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Industry Gap Analysis</h2>
+                <div class="filter-bar">
+                    <select id="sortBy">
+                        <option value="untapped">Sort by Untapped Potential</option>
+                        <option value="certified">Sort by Certification Rate</option>
+                        <option value="establishments">Sort by Total Establishments</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="gapTable">
+                    <thead>
+                        <tr>
+                            <th>Industry</th>
+                            <th>NAICS</th>
+                            <th>MI Establishments</th>
+                            <th>Certified</th>
+                            <th>Certification Rate</th>
+                            <th>Untapped</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Certified Companies -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Certified Maritime Suppliers in Michigan</h2>
+            </div>
+            <div class="certified-companies" id="certifiedCompanies">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Product Coverage -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Product Type Coverage</h2>
+            </div>
+            <div class="chart-container" style="height: 400px;">
+                <canvas id="productChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Michigan Maritime Supplier Discovery Dashboard | Data: BEA Input-Output Tables, Census CBP, Class Society Certifications</p>
+        <p>Manufacturing Intelligence Platform | NO LAB Research</p>
+    </div>
+
+    <script>
+        // Data
+        const gapData = [
+            { naics: '323110', industry: 'Printing', establishments: 559, certified: 0, rate: 0 },
+            { naics: '33399B', industry: 'Fluid power process machinery', establishments: 174, certified: 1, rate: 0.6 },
+            { naics: '336390', industry: 'Motor vehicle parts', establishments: 136, certified: 0, rate: 0 },
+            { naics: '33211A', industry: 'Forging, stamping, sintering', establishments: 85, certified: 2, rate: 2.4 },
+            { naics: '333920', industry: 'Material handling equipment', establishments: 84, certified: 0, rate: 0 },
+            { naics: '33441A', industry: 'Electronic components', establishments: 48, certified: 0, rate: 0 },
+            { naics: '336310', industry: 'Motor vehicle engines', establishments: 45, certified: 0, rate: 0 },
+            { naics: '322210', industry: 'Paperboard containers', establishments: 43, certified: 0, rate: 0 },
+            { naics: '336320', industry: 'Motor vehicle electrical', establishments: 40, certified: 0, rate: 0 },
+            { naics: '336350', industry: 'Transmission & power train', establishments: 36, certified: 0, rate: 0 },
+            { naics: '331520', industry: 'Nonferrous metal foundries', establishments: 28, certified: 1, rate: 3.6 },
+            { naics: '335312', industry: 'Motors & generators', establishments: 27, certified: 1, rate: 3.7 },
+            { naics: '335314', industry: 'Relay & industrial control', establishments: 24, certified: 0, rate: 0 },
+            { naics: '33291A', industry: 'Valves & fittings', establishments: 18, certified: 7, rate: 38.9 },
+            { naics: '334418', industry: 'Printed circuit assembly', establishments: 18, certified: 0, rate: 0 },
+            { naics: '326290', industry: 'Rubber products', establishments: 11, certified: 0, rate: 0 },
+            { naics: '334511', industry: 'Navigation instruments', establishments: 7, certified: 1, rate: 14.3 },
+            { naics: '333618', industry: 'Engine equipment', establishments: 6, certified: 2, rate: 33.3 },
+            { naics: '333914', industry: 'Pumping equipment', establishments: 4, certified: 2, rate: 50.0 },
+            { naics: '336612', industry: 'Boat building', establishments: 4, certified: 0, rate: 0 }
+        ];
+
+        const certifiedCompanies = [
+            { name: 'The Oilgear Company', city: 'Traverse City', products: 'Valves, Drilling Equipment, Control Valves' },
+            { name: 'Viking Corporation', city: 'Hastings', products: 'Deluge Valves, Fire Sprinklers, Flow Control' },
+            { name: 'AlcoTec Wire Corporation', city: 'Traverse City', products: 'Welding Consumables, Wire/Gas Combinations' },
+            { name: 'Blackmer (Dover)', city: 'Grand Rapids', products: 'Pumps' },
+            { name: 'MP Pumps Inc', city: 'Madison Heights', products: 'Centrifugal Self-Priming Pumps' },
+            { name: 'DAVCO Technology', city: 'Saline', products: 'Fuel Oil Filters, Filtration Systems' },
+            { name: 'Yates Industries', city: 'St. Clair Shores', products: 'Hydraulic Steering Gear Cylinders' },
+            { name: 'World Tek Industries', city: 'Romulus', products: 'Diesel Engines' },
+            { name: 'Fireboy-Xintex', city: 'Grand Rapids', products: 'Fire Suppression Systems' },
+            { name: 'Freudenberg Battery', city: 'Midland', products: 'Li-Ion Battery Systems' },
+            { name: 'Binsfeld Engineering', city: 'Maple City', products: 'Accelerometers, Meters' },
+            { name: 'Eagle Alloy', city: 'Muskegon', products: 'Container Corner Castings' }
+        ];
+
+        const productTypes = [
+            { type: 'Valves', certified: 15, potential: 18 },
+            { type: 'Pumps', certified: 13, potential: 4 },
+            { type: 'Drilling Equipment', certified: 7, potential: 6 },
+            { type: 'Welding Materials', certified: 10, potential: 85 },
+            { type: 'Hydraulic Equipment', certified: 4, potential: 174 },
+            { type: 'Fire Protection', certified: 4, potential: 18 },
+            { type: 'Electrical Components', certified: 2, potential: 99 },
+            { type: 'Engines', certified: 1, potential: 51 }
+        ];
+
+        // Render Gap Chart
+        const gapCtx = document.getElementById('gapChart').getContext('2d');
+        const topGapData = gapData.slice(0, 12);
+        new Chart(gapCtx, {
+            type: 'bar',
+            data: {
+                labels: topGapData.map(d => d.industry),
+                datasets: [
+                    {
+                        label: 'Certified',
+                        data: topGapData.map(d => d.certified),
+                        backgroundColor: '#48bb78',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Uncertified',
+                        data: topGapData.map(d => d.establishments - d.certified),
+                        backgroundColor: '#e2e8f0',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Render Category Chart
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        const categories = {
+            'Machinery & Equipment': 174 + 84 + 27 + 24 + 6,
+            'Transportation Equipment': 136 + 45 + 40 + 36 + 4,
+            'Fabricated Metals': 85 + 28 + 18 + 6,
+            'Electronics': 48 + 18 + 7,
+            'Paper & Printing': 559 + 43 + 4,
+            'Chemicals & Plastics': 11
+        };
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categories),
+                datasets: [{
+                    data: Object.values(categories),
+                    backgroundColor: ['#4299e1', '#48bb78', '#ed8936', '#9f7aea', '#f56565', '#38b2ac']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Render Product Chart
+        const prodCtx = document.getElementById('productChart').getContext('2d');
+        new Chart(prodCtx, {
+            type: 'bar',
+            data: {
+                labels: productTypes.map(p => p.type),
+                datasets: [
+                    {
+                        label: 'Certified Products',
+                        data: productTypes.map(p => p.certified),
+                        backgroundColor: '#48bb78',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Potential Suppliers (uncertified)',
+                        data: productTypes.map(p => p.potential),
+                        backgroundColor: '#4299e1',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        });
+
+        // Render Table
+        function renderTable(data) {
+            const tbody = document.querySelector('#gapTable tbody');
+            tbody.innerHTML = data.map(row => {
+                const untapped = row.establishments - row.certified;
+                let badgeClass = 'badge-danger';
+                if (row.rate > 30) badgeClass = 'badge-success';
+                else if (row.rate > 10) badgeClass = 'badge-warning';
+
+                let progressClass = 'low';
+                if (row.rate > 30) progressClass = 'high';
+                else if (row.rate > 10) progressClass = 'medium';
+
+                return `
+                    <tr>
+                        <td><strong>${row.industry}</strong></td>
+                        <td>${row.naics}</td>
+                        <td>${row.establishments.toLocaleString()}</td>
+                        <td>${row.certified}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="progress-bar" style="width: 80px;">
+                                    <div class="progress-fill ${progressClass}" style="width: ${Math.min(row.rate, 100)}%;"></div>
+                                </div>
+                                <span class="badge ${badgeClass}">${row.rate.toFixed(1)}%</span>
+                            </div>
+                        </td>
+                        <td><strong>${untapped.toLocaleString()}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        renderTable(gapData);
+
+        // Sort functionality
+        document.getElementById('sortBy').addEventListener('change', function(e) {
+            let sorted = [...gapData];
+            switch(e.target.value) {
+                case 'untapped':
+                    sorted.sort((a, b) => (b.establishments - b.certified) - (a.establishments - a.certified));
+                    break;
+                case 'certified':
+                    sorted.sort((a, b) => b.rate - a.rate);
+                    break;
+                case 'establishments':
+                    sorted.sort((a, b) => b.establishments - a.establishments);
+                    break;
+            }
+            renderTable(sorted);
+        });
+
+        // Render Certified Companies
+        document.getElementById('certifiedCompanies').innerHTML = certifiedCompanies.map(c => `
+            <div class="company-card">
+                <div class="company-name">${c.name}</div>
+                <div class="company-location">${c.city}, MI</div>
+                <div class="company-products">${c.products}</div>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>
